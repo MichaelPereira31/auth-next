@@ -1,31 +1,44 @@
+import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-const handler = NextAuth({
+const nextAuthOptions: NextAuthOptions = {
+  pages: {
+    signIn: '/login'
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" }
+        login: { label: "login", type: "text" },
+        password: { label: "password", type: "password" }
       },
       async authorize(credentials, req) {
-        console.log(credentials)
-        return null
-        // const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+        if (!credentials) return null;
 
-        // if (user) {
-        //   // Any object returned will be saved in `user` property of the JWT
-        //   return user
-        // } else {
-        //   // If you return null then an error will be displayed advising the user to check their details.
-        //   return null
+        if(credentials.login ==='michael@gmail.com' && credentials.password ==='123'){
+          return {
+            id: '1',
+            login: credentials.login,
+            token: 'seu_token',
+            isAdmin: false,
+          }
+        }
 
-        //   // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
-        // }
-      }
+        return null;
+      },
     })
-  ]
-})
+  ],
+  callbacks: {
+    async jwt({ token, user }: any) {
+      user && (token.user = user)
+      return token
+    },
+    async session({ session, token }: any) {
+      session = token.user as any
+      return session
+    },
+  }
+}
+const handler = NextAuth(nextAuthOptions)
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST, nextAuthOptions }

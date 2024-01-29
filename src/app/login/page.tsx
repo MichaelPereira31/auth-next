@@ -1,7 +1,7 @@
 "use client"
 
+import { signIn } from "next-auth/react";
 import { FormEvent } from "react";
-import { signIn } from "next-auth"
 
 
 export default function Home() {
@@ -13,8 +13,7 @@ export default function Home() {
       password: formData.get('password')
     }
 
-    console.log(data)
-    signIn("credentials",{...data, callbackUrl:'/'})
+    signIn("credentials",{...data, callbackUrl:'/dashboard'})
   }
 
   return (
@@ -24,7 +23,7 @@ export default function Home() {
      <div className="bg-red-900 p-10 rounded-3xl">
       <form onSubmit={login} method="post" className="flex flex-col">
           <label htmlFor="login" className="text-xl">Login</label>
-          <input type="login" name="login" id="login" className="p-2 mb-5 rounded-2xl"/>
+          <input type="text" name="login" id="login" className="p-2 mb-5 rounded-2xl"/>
           
           <label htmlFor="password" className="text-xl">Senha</label>
           <input type="password" name="password" id="password" className="p-2 mb-5 rounded-2xl"/>
